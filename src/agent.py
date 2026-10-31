@@ -443,7 +443,7 @@ class EmporioAgent:
             tracking_code = extract_tracking_code(message)
             identifier = extract_email_or_phone(message)
             if tracking_code and identifier:
-                order_res = check_order(tracking_code, identifier)
+                order_res = get_order_status(tracking_code=tracking_code, customer_identifier=identifier)
                 data_sections.append(f"### DADOS DO PEDIDO CONSULTADO:\n{json.dumps(order_res, ensure_ascii=False, indent=2)}")
                 guidelines.append("- Informe o andamento do pedido consultado, prazo de entrega e transportadora.")
             else:
