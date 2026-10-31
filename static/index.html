@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empório da Música — Sua música começa aqui</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <aside aria-label="Avisos da loja" class="top-bar">
+    <div class="container top-bar-content">
+      <span>📍 Rua 14 de Maio, 3200 — Centro, Campo Grande/MS</span>
+      <span>🕒 Seg–Sex: 09h às 18h | Sáb: 09h às 13h</span>
+      <span>💳 Até 12x sem juros | ⚡ 5% OFF no PIX</span>
+    </div>
+  </aside>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header-content">
+      <div class="brand">
+        <div class="brand-icon">🎸</div>
+        <div class="brand-text">
+          <h1>Empório da Música</h1>
+          <p>Instrumentos Selecionados • Campo Grande/MS</p>
+        </div>
+      </div>
+      
+      <div class="header-search">
+        <input type="text" id="catalog-search" placeholder="Buscar violões, guitarras, marcas..." aria-label="Buscar produtos">
+        <button id="search-btn" aria-label="Pesquisar">🔍</button>
+      </div>
+
+      <div class="header-actions">
+        <button class="chat-launcher-header" id="header-chat-btn">
+          💬 Consultor Online
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-badge">Tradição desde 2008 em Mato Grosso do Sul</div>
+      <h2>Encontre o instrumento perfeito para a sua voz e estilo</h2>
+      <p>Mais de 300 instrumentos selecionados com garantia de procedência, regulagem profissional e frete grátis para a Grande Campo Grande nas compras acima de R$ 500.</p>
+      
+      <div class="hero-highlights">
+        <div class="highlight-item">
+          <span class="icon">⚡</span>
+          <div>
+            <strong>5% de Desconto no PIX</strong>
+            <small>Economia real à vista</small>
+          </div>
+        </div>
+        <div class="highlight-item">
+          <span class="icon">🚚</span>
+          <div>
+            <strong>Entrega Local Própria</strong>
+            <small>1 a 3 dias úteis na Capital</small>
+          </div>
+        </div>
+        <div class="highlight-item">
+          <span class="icon">🛡️</span>
+          <div>
+            <strong>Garantia Oficial & CDC</strong>
+            <small>Até 7 dias para devolução</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Filter Bar -->
+  <nav aria-label="Filtro de categorias" class="categories-bar">
+    <div class="container">
+      <div class="filter-pills" id="category-filters">
+        <button class="pill active" data-category="">Todos</button>
+        <button class="pill" data-category="Violões">Violões</button>
+        <button class="pill" data-category="Guitarras">Guitarras</button>
+        <button class="pill" data-category="Baixos">Baixos</button>
+        <button class="pill" data-category="Teclados">Teclados</button>
+        <button class="pill" data-category="Baterias">Baterias</button>
+        <button class="pill" data-category="Ukuleles">Ukuleles</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Catalog Grid Section -->
+  <main class="container catalog-section">
+    <div class="catalog-header">
+      <div>
+        <h3 id="catalog-title">Catálogo de Instrumentos</h3>
+        <p id="catalog-subtitle">Exibindo instrumentos disponíveis com entrega imediata</p>
+      </div>
+      <div class="catalog-count" id="product-count">Carregando catálogo...</div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="products-grid">
+      <!-- Injected dynamically by app.js -->
+    </div>
+  </main>
+
+  <!-- Store Information & Policies Section -->
+  <section class="store-info-section">
+    <div class="container info-grid">
+      <div class="info-card">
+        <h4>🏢 Loja Física & Atendimento</h4>
+        <p><strong>Endereço:</strong> Rua 14 de Maio, 3200 — Centro, Campo Grande - MS, CEP 79202-333</p>
+        <p><strong>Telefone / WhatsApp:</strong> (67) 3341-4444</p>
+        <p><strong>E-mail:</strong> contato@emporiodamusica.com.br</p>
+      </div>
+      <div class="info-card">
+        <h4>🔄 Trocas e Devoluções</h4>
+        <p>• <strong>Direito de Arrependimento:</strong> Até 7 dias corridos após o recebimento para compras online (CDC Art. 49).</p>
+        <p>• <strong>Trocas por Defeito:</strong> Até 30 dias na loja e garantia legal de 90 dias.</p>
+        <p>• Frete reverso gratuito em caso de devolução dentro do prazo legal.</p>
+      </div>
+      <div class="info-card">
+        <h4>💳 Pagamento & Envio</h4>
+        <p>• <strong>PIX:</strong> 5% de desconto direto no checkout.</p>
+        <p>• <strong>Cartão:</strong> Em até 12x sem juros (parcela mínima de R$ 100).</p>
+        <p>• <strong>Envio:</strong> Motoboy em Campo Grande | Correios e Jadlog para todo o Brasil.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <p class="brand-name">Empório da Música Instrumentos Musicais Ltda.</p>
+        <p class="cnpj">CNPJ: 12.345.678/0001-90 • Campo Grande - MS</p>
+        <p class="notice">Foco exclusivo em instrumentos musicais. Não comercializamos acessórios (cordas avulsas, cabos, cases, pedais ou amplificadores).</p>
+      </div>
+      <div class="footer-copyright">
+        © 2026 Empório da Música. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Chat Widget -->
+  <div class="chat-widget-container" id="chat-widget">
+    <!-- Chat Button Launcher -->
+    <button class="chat-launcher" id="chat-launcher" aria-label="Abrir assistente virtual">
+      <span class="launcher-icon">💬</span>
+      <span class="launcher-label">Fale com o Consultor</span>
+      <span class="online-dot"></span>
+    </button>
+
+    <!-- Chat Window Modal -->
+    <div class="chat-window" id="chat-window" style="display: none;">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="agent-avatar">🎸</div>
+          <div>
+            <strong>Consultor Empório</strong>
+            <small>Online • Campo Grande/MS</small>
+          </div>
+        </div>
+        <div class="chat-header-actions">
+          <button id="chat-reset-btn" title="Limpar conversa" aria-label="Limpar histórico">🔄</button>
+          <button id="chat-close-btn" title="Minimizar chat" aria-label="Fechar chat">✕</button>
+        </div>
+      </div>
+
+      <!-- Quick Action Prompt Chips -->
+      <div class="quick-chips">
+        <button class="chip" data-msg="Quais opções de violões disponíveis custando até R$1000?">Violões até R$1000</button>
+        <button class="chip" data-msg="Quanto custa o Takamine GD20?">Takamine GD20</button>
+        <button class="chip" data-msg="Qual o endereço da loja e horário de funcionamento?">Endereço e Horário</button>
+        <button class="chip" data-msg="Me arrependi da minha compra online, posso devolver meu pedido?">Política de Devolução</button>
+      </div>
+
+      <!-- Messages Feed -->
+      <div class="chat-messages" id="chat-messages">
+        <div class="message agent-message">
+          <div class="message-content">
+            Olá! Sou o consultor virtual da <strong>Empório da Música</strong> aqui de Campo Grande. Como posso te ajudar na escolha do seu próximo instrumento musical hoje?
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="typing-indicator" id="typing-indicator" style="display: none;">
+        <span></span><span></span><span></span>
+        <small>Consultor digitando...</small>
+      </div>
+
+      <!-- Chat Input Area -->
+      <form class="chat-input-area" id="chat-form">
+        <input type="text" id="chat-input" placeholder="Digite sua dúvida ou pedido..." autocomplete="off">
+        <button type="submit" id="chat-send-btn" aria-label="Enviar mensagem">➤</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
