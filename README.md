@@ -20,6 +20,7 @@ Production-grade prototype of an intelligent conversational customer service age
 Rather than overloading a single monolithic ReAct prompt with dozens of conflicting instructions and tools, we implemented a **Hierarchical Intent-Routed Architecture**:
 
 ![Hierarchical Router-Worker Architecture](docs/images/hierarchical_architecture.png)
+
 * **Triage / Guardrail Router (Fast / Low-Reasoning):** Categorizes incoming user queries in a single step into four discrete domains (`CATALOG_SALES`, `ORDER_TRACKING`, `STORE_POLICY`, `OUT_OF_SCOPE`) while filtering malicious inputs.
 * **Specialized Workers (High-Reasoning Execution):**
   * **Sales & Catalog Consultant:** Performs parameterized SQL queries against the product database, applying empathetic consultative sales principles (*SPIN Selling*) and soundwood/ergonomics guidance. Strictly checks `is_active == 1` for promotions to prevent applying expired discounts.
@@ -30,15 +31,19 @@ Rather than overloading a single monolithic ReAct prompt with dozens of conflict
 
 ### 2. Multi-Turn Session Memory (Sliding Window)
 To enable natural conversational continuity (e.g., asking *"How much is Takamine GD20?"* and following up with *"Does it come in Natural finish?"* or *"What is the shipping cost for it to Campo Grande?"*):
+
 * Sessions are isolated by `session_id`.
 * The memory engine employs a **Sliding Window of the last 6 conversational turns**, preserving relevant context while strictly preventing token drift and context-window cost inflation.
 
 ### 3. Production Tiered Reasoning Strategy
 To optimize between **reasoning depth, response latency, and inference cost**:
+
 * **High-Reasoning Tier (`meta/meta-llama-3.1-70b-instruct` / `gpt-4o`):** 
   Employed for conversational synthesis, consultative selling, nuanced instrument diagnosis (e.g., solid Spruce vs. laminated Nato, nylon vs. steel strings), and consumer protection law (CDC) interpretation.
+
 * **Low-Reasoning / Fast Execution Tier (`meta/meta-llama-3.1-8b-instruct` / `gpt-4o-mini`):** 
   Employed for rapid intent routing, structured parameter extraction for SQL queries, and instant keyword guardrail filtering.
+
 * **Multi-Provider Decoupling:** Fully abstracted LLM client supporting both **Replicate** (`REPLICATE_API_TOKEN`) and **OpenAI** (`OPENAI_API_KEY`) via `.env` configuration.
 
 ### 4. Data Storage & Encoding Handling
@@ -111,6 +116,7 @@ flowchart TD
 
 ## ⚠️ Known Limitations & Future Roadmap (What would be done with more time)
 As requested in the Artefact assessment guidelines:
+
 1. **Continuous Observability & Tracing:** Integrating OpenTelemetry and **Langfuse** / **Arize Phoenix** to monitor production latency, token usage, hallucination scores, and user satisfaction metrics.
 2. **Automated LLM Evaluation Pipeline (Evals):** Implementing a continuous CI/CD evaluation harness using **Ragas** or **DeepEval** to quantitatively score *Faithfulness*, *Answer Relevance*, and *Context Precision* across every prompt revision.
 3. **Omnichannel Voice & Messaging Integration:** Connecting the FastAPI backend directly to the **WhatsApp Business API (via Twilio or Meta Cloud API)**, with speech-to-text integration (OpenAI Whisper) allowing musicians to send voice queries directly from the rehearsal room.
