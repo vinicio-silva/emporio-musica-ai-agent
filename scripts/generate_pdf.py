@@ -1,8 +1,8 @@
 """Generate high-fidelity, professional PDF documentation using headless Chrome/Edge.
 
 Features:
-- Pure text-based architectural workflows and ASCII diagrams (zero broken images or raw mermaid code blocks)
-- Disables all browser headers/footers (eliminating 'file:///' URLs at page bottoms)
+- Responsive, clean HTML/CSS workflow cards (eliminating raw mermaid code and broken ASCII wrapping)
+- Disables all browser headers/footers (no 'file:///' URLs at page bottoms)
 - Clean, standard lists for Known Limitations & Future Roadmap
 - Generates:
   1. docs/Vinicio Bernardes Silva - AI Engineer – Full-Stack para Aplicações com IA Generativa.pdf
@@ -64,21 +64,21 @@ h1 {
     border-bottom: 2px solid #0969da;
     padding-bottom: 0.3em;
     margin-top: 0;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.3em;
     color: #0969da;
 }
 h2 {
-    font-size: 14.5pt;
+    font-size: 14pt;
     font-weight: 600;
     border-bottom: 1px solid #d0d7de;
     padding-bottom: 0.25em;
-    margin-top: 1.6em;
+    margin-top: 1.5em;
     margin-bottom: 0.5em;
     page-break-after: avoid;
     color: #1f2328;
 }
 h3 {
-    font-size: 12pt;
+    font-size: 11.5pt;
     font-weight: 600;
     margin-top: 1.2em;
     margin-bottom: 0.4em;
@@ -86,7 +86,7 @@ h3 {
     color: #24292f;
 }
 h4 {
-    font-size: 10.5pt;
+    font-size: 10pt;
     font-weight: 600;
     margin-top: 1em;
     page-break-after: avoid;
@@ -164,96 +164,223 @@ hr {
 .page-break {
     page-break-before: always;
 }
+
+/* Elegant CSS Workflow Cards */
+.workflow-box, .security-box, .methodology-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 1.2em 0;
+    page-break-inside: avoid;
+}
+.wf-node {
+    background: #ffffff;
+    border: 1.5px solid #0969da;
+    border-radius: 6px;
+    padding: 6px 12px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.wf-node strong {
+    color: #0969da;
+    font-size: 9.5pt;
+}
+.wf-sub {
+    font-size: 8pt;
+    color: #57606a;
+    margin-top: 2px;
+}
+.wf-arrow {
+    text-align: center;
+    color: #0969da;
+    font-size: 11pt;
+    font-weight: bold;
+    line-height: 1.1;
+    margin: 4px 0;
+}
+.wf-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 4px 0;
+}
+.wf-card {
+    flex: 1;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 8pt;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.wf-card-title {
+    font-weight: 700;
+    color: #1f2328;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #eaecef;
+    padding-bottom: 2px;
+}
+.wf-card-body {
+    color: #424a53;
+    line-height: 1.35;
+}
+.sec-layer {
+    display: flex;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.sec-layer:last-child {
+    border-bottom: none;
+}
+.sec-num {
+    background: #0969da;
+    color: white;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 10px;
+    white-space: nowrap;
+}
+.sec-content {
+    font-size: 8.5pt;
+    color: #1f2328;
+    line-height: 1.4;
+}
+.lead-node {
+    background: #ffffff;
+    border: 1.5px solid #1a7f37;
+    border-radius: 6px;
+    padding: 6px 12px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+.lead-node strong {
+    color: #1a7f37;
+    font-size: 9.5pt;
+}
+.methodology-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
 """
 
-DIAGRAM_HIERARCHICAL = """
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                        CUSTOMER INPUT MESSAGE                          │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-                                    ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│               TRIAGE & GUARDRAIL ROUTER (Llama 3 8B)                   │
-│   • Fast Intent Classification (<300ms) • Anti-Jailbreak Filter        │
-└───────┬───────────────────┬───────────────────┬───────────────────┬────┘
-        │                   │                   │                   │
-        ▼                   ▼                   ▼                   ▼
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│ CATALOG &    │    │ ORDER        │    │ STORE POLICY │    │ SCOPE &      │
-│ SALES WORKER │    │ TRACKING     │    │ WORKER (RAG) │    │ ACCESSORIES  │
-│ (SPIN Model) │    │ (Dual Auth)  │    │ (CDC & Hours)│    │ (Deflection) │
-└───────┬──────┘    └───────┬──────┘    └───────┬──────┘    └───────┬──────┘
-        │                   │                   │                   │
-        └───────────────────┴─────────┬─────────┴───────────────────┘
-                                      │
-                                      ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│             CONSULTATIVE SYNTHESIS & STREAMED RESPONSE                 │
-│         • Empathy & Clarity • Transparent Pricing • LGPD Compliant     │
-└────────────────────────────────────────────────────────────────────────┘
-```
+HTML_HIERARCHICAL = """
+<div class="workflow-box">
+  <div class="wf-node">
+    <strong>1. Customer Input Message</strong>
+  </div>
+  <div class="wf-arrow">&#9660;</div>
+  <div class="wf-node">
+    <strong>2. Triage &amp; Guardrail Router (Llama 3 8B)</strong>
+    <div class="wf-sub">Fast Intent Classification (&lt;300ms) &bull; Prompt Injection &amp; Abuse Filtering</div>
+  </div>
+  <div class="wf-arrow">&#9660;</div>
+  <div class="wf-grid">
+    <div class="wf-card">
+      <div class="wf-card-title">Catalog &amp; Sales</div>
+      <div class="wf-card-body">SPIN Selling Model, SQL Parameterized Query, Active Prompts</div>
+    </div>
+    <div class="wf-card">
+      <div class="wf-card-title">Order Tracking</div>
+      <div class="wf-card-body">Dual-Factor LGPD Authentication (Tracking + Email/Phone)</div>
+    </div>
+    <div class="wf-card">
+      <div class="wf-card-title">Store Policy (RAG)</div>
+      <div class="wf-card-body">Semantic BM25 Search on Store Manual (CDC, Returns, Hours)</div>
+    </div>
+    <div class="wf-card">
+      <div class="wf-card-title">Scope Guardrail</div>
+      <div class="wf-card-body">Polite Deflection for Non-Instrument Accessories (Section 7.1)</div>
+    </div>
+  </div>
+  <div class="wf-arrow">&#9660;</div>
+  <div class="wf-node">
+    <strong>3. Consultative Synthesis &amp; Streamed Response (Llama 3 70B)</strong>
+    <div class="wf-sub">Multi-Intent Unified Answer &bull; Empathetic Tone &bull; Real-time Token Streaming</div>
+  </div>
+</div>
 """
 
-DIAGRAM_SECURITY = """
-```text
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                  5-LAYER DEFENSE-IN-DEPTH ARCHITECTURE                       │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ Layer 1: Context Isolation & XML Tagging                                     │
-│          User messages strictly enclosed within <user_message> boundaries.   │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ Layer 2: System Prompt Immutability & Jailbreak Refusal                      │
-│          Immunity against prompt injections, DAN mode, and persona hijacking.│
-├──────────────────────────────────────────────────────────────────────────────┤
-│ Layer 3: Scope Guardrails & Business Deflection                              │
-│          Strict instrument focus (Section 7.1); polite deflection of parts.  │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ Layer 4: Parameterized Relational Queries (Anti-SQLi)                         │
-│          Zero raw SQL generation by LLM; typed functions with '?' parameters.│
-├──────────────────────────────────────────────────────────────────────────────┤
-│ Layer 5: PII Protection & LGPD Compliance (Law 13.709/2018)                  │
-│          Dual-factor authentication required for order status lookups.       │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
+HTML_SECURITY = """
+<div class="security-box">
+  <div class="sec-layer">
+    <span class="sec-num">Layer 1</span>
+    <div class="sec-content">
+      <strong>Context Isolation &amp; XML Tagging:</strong> User inputs wrapped in <code>&lt;user_message&gt;</code> delimiters to prevent prompt injection.
+    </div>
+  </div>
+  <div class="sec-layer">
+    <span class="sec-num">Layer 2</span>
+    <div class="sec-content">
+      <strong>System Prompt Immutability:</strong> Hardened guardrails refusing DAN mode, 'ignore previous instructions', and persona hijacking.
+    </div>
+  </div>
+  <div class="sec-layer">
+    <span class="sec-num">Layer 3</span>
+    <div class="sec-content">
+      <strong>Scope &amp; Product Boundaries:</strong> Strict adherence to Section 7.1 (instruments only, polite redirection of accessories).
+    </div>
+  </div>
+  <div class="sec-layer">
+    <span class="sec-num">Layer 4</span>
+    <div class="sec-content">
+      <strong>Parameterized SQL Queries (Anti-SQLi):</strong> Zero raw SQL generated by LLM; typed functions with parameterized <code>?</code> placeholders.
+    </div>
+  </div>
+  <div class="sec-layer">
+    <span class="sec-num">Layer 5</span>
+    <div class="sec-content">
+      <strong>PII Protection &amp; LGPD Compliance:</strong> Dual-factor authentication required for order status lookups (Law 13.709/2018).
+    </div>
+  </div>
+</div>
 """
 
-DIAGRAM_METHODOLOGY = """
-```text
-┌──────────────────────────────────────────────────────────────────────────────┐
-│              ORCHESTRATOR-WORKERS MULTI-AGENT DEVELOPMENT WORKFLOW           │
-├──────────────────────────────────────────────────────────────────────────────┤
-│  Lead Architect / Orchestrator (High Reasoning - Pro)                        │
-│  • API Contracts, Schema Design, Consultative Prompts & Code Audits          │
-│       │                                                                      │
-│       ├──► Data Worker (Fast Execution)                                      │
-│       │    • CSV Ingestion, SQLite Schema, Indexes & UTF-8 Cleansing         │
-│       │                                                                      │
-│       ├──► UI Worker (Fast Execution)                                        │
-│       │    • Storefront Catalog HTML5, CSS Styling & Streaming Chat Widget   │
-│       │                                                                      │
-│       └──► QA Worker (Deterministic Validation)                              │
-│            • Unit Tests, RAG Retrieval Tests, Guardrail & Scenario Audits    │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
+HTML_METHODOLOGY = """
+<div class="methodology-box">
+  <div class="lead-node">
+    <strong>Lead Architect / Orchestrator (High Reasoning - Pro)</strong>
+    <div class="wf-sub">API Contracts &bull; Schema Design &bull; Consultative Prompts &bull; Code Review &amp; Sign-Off</div>
+  </div>
+  <div class="methodology-grid">
+    <div class="wf-card">
+      <div class="wf-card-title">Data Worker (Fast)</div>
+      <div class="wf-card-body">CSV Ingestion to SQLite, Relational Schemas, Indexes &amp; UTF-8 Cleansing</div>
+    </div>
+    <div class="wf-card">
+      <div class="wf-card-title">UI Worker (Fast)</div>
+      <div class="wf-card-body">Storefront HTML5/Tailwind, Floating Chat Widget &amp; Token Streaming Bridge</div>
+    </div>
+    <div class="wf-card">
+      <div class="wf-card-title">QA Worker (Deterministic)</div>
+      <div class="wf-card-body">16 Unit &amp; RAG Tests, Guardrail Verification &amp; 5 Assessment Scenarios Audits</div>
+    </div>
+  </div>
+</div>
 """
 
 
 def transform_markdown_for_pdf(md_content: str) -> str:
-    """Transform markdown to pure text diagrams, removing raw mermaid blocks and image references."""
-    # 1. Remove all raw mermaid code blocks
-    md = re.sub(r"```mermaid[\s\S]*?```", "", md_content)
+    """Transform markdown into clean HTML presentation for PDF."""
+    # 1. Cleanly strip badges block
+    md = re.sub(r"\[!\[.*?\]\(.*?\)\](?:\(.*?\))?\s*", "", md_content)
 
-    # 2. Replace image references with formatted text diagrams
-    md = re.sub(r"!\[.*?Hierarchical.*?\]\(.*?\)", DIAGRAM_HIERARCHICAL.strip(), md)
-    md = re.sub(r"!\[.*?Security.*?\]\(.*?\)", DIAGRAM_SECURITY.strip(), md)
-    md = re.sub(r"!\[.*?Orchestrator.*?\]\(.*?\)", DIAGRAM_METHODOLOGY.strip(), md)
+    # 2. Remove all raw mermaid code blocks
+    md = re.sub(r"```mermaid[\s\S]*?```", "", md)
 
-    # 3. Remove badges bar and any remaining image tags for clean typography
-    md = re.sub(r"\[!\[.*?\]\(.*?\)\]\(.*?\)", "", md)
+    # 3. Replace the 3 architecture diagram image references with clean CSS workflow cards
+    md = re.sub(r"!\[.*?\]\([^\)]*hierarchical_architecture\.png\)", HTML_HIERARCHICAL.strip(), md)
+    md = re.sub(r"!\[.*?\]\([^\)]*security_hardening_layers\.png\)", HTML_SECURITY.strip(), md)
+    md = re.sub(r"!\[.*?\]\([^\)]*development_methodology\.png\)", HTML_METHODOLOGY.strip(), md)
+
+    # 4. Remove any other lingering image references
     md = re.sub(r"!\[.*?\]\(.*?\)", "", md)
 
-    # 4. Clean up multiple empty lines
+    # 5. Clean up multiple empty lines
     md = re.sub(r"\n{3,}", "\n\n", md)
     return md
 
@@ -270,7 +397,7 @@ def convert_html_to_pdf(html_content: str, output_pdf_path: Path) -> None:
         "--headless=new",
         "--disable-gpu",
         "--no-sandbox",
-        "--no-pdf-header-footer",  # Strictly disables file:/// URL and page headers/footers
+        "--no-pdf-header-footer",
         f"--print-to-pdf={str(output_pdf_path)}",
         file_url,
     ]
@@ -355,4 +482,4 @@ def generate_all_pdfs() -> None:
 if __name__ == "__main__":
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     generate_all_pdfs()
-    print("\nAll PDFs successfully generated with pure text formatting and zero headers/footers!")
+    print("\nAll PDFs successfully generated with CSS cards and zero headers/footers!")
