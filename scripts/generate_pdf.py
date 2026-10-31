@@ -442,7 +442,16 @@ def transform_markdown_for_pdf(md_content: str, is_main: bool = True) -> str:
         ui_html = f'<div class="ui-screenshot-card"><img src="data:image/png;base64,{b64_img}" alt="Empório da Música Storefront &amp; Chat Widget" /><p class="caption">Figura: Interface Web da Empório da Música com Catálogo Dinâmico e Widget Flutuante de Atendimento Conversacional via Streaming SSE.</p></div>'
         md = re.sub(r"!\[.*?\]\([^\)]*storefront_ui\.png\)", ui_html, md)
 
-    # 5. Remove any other lingering image references
+    # 5. Embed 5 official scenario screenshots as base64 data URIs
+    for i in range(1, 6):
+        scen_img_path = BASE_DIR / "docs" / "images" / f"scenario_{i}_ui.png"
+        if scen_img_path.exists():
+            with open(scen_img_path, "rb") as f:
+                b64_scen = base64.b64encode(f.read()).decode("utf-8")
+            scen_html = f'<div class="ui-screenshot-card scenario-card"><img src="data:image/png;base64,{b64_scen}" alt="Cenário {i} UI Execution" /><p class="caption">Evidência Visual de Execução — Cenário {i} no Widget de Chat da Loja Virtual.</p></div>'
+            md = re.sub(rf"!\[.*?\]\([^\)]*scenario_{i}_ui\.png\)", scen_html, md)
+
+    # 6. Remove any other lingering image references
     md = re.sub(r"!\[.*?\]\(.*?\)", "", md)
 
     # 5. Clean up multiple empty lines

@@ -241,3 +241,21 @@ All 5 mandatory evaluation scenarios specified in the technical assessment were 
 | **Cenário 3** | *"Quanto custa o Takamine GD20? Vocês têm em estoque?"* | `CATALOG_SALES` | Deterministic product detail lookup (R$ 3.290,00, 3 units in stock), transparent low-stock notice, PIX & card terms. | **100% Passed** |
 | **Cenário 4** | *"Me arrependi da minha compra online, posso devolver meu pedido?"* | `STORE_POLICY` | Article 49 CDC (Right of Regret within 7 calendar days), free reverse logistics, sealed original packaging conditions. | **100% Passed** |
 | **Cenário 5** | *"Vocês têm encordoamento de guitarra D'Addario 0.10 e pedal de distorção Boss?"* | `OUT_OF_SCOPE` | Immediate deflection under Section 7.1: store focuses exclusively on complete instruments, redirects to local Campo Grande partners. | **100% Passed** |
+
+### 3. Visual Execution Transcripts (UI Chat Modal per Scenario)
+Each official scenario tested in the web storefront chat interface with its live streaming response:
+
+* **Cenário 1 — Catalog Search (< R$ 1.000):**
+![Cenário 1 — Catalog Search (< R$ 1.000)](docs/images/scenario_1_ui.png)
+
+* **Cenário 2 — Store Information & Operating Hours:**
+![Cenário 2 — Store Information & Operating Hours](docs/images/scenario_2_ui.png)
+
+* **Cenário 3 — Product Pricing & Stock (Takamine GD20):**
+![Cenário 3 — Product Pricing & Stock](docs/images/scenario_3_ui.png)
+
+* **Cenário 4 — Return Policy & Right of Regret (CDC Art. 49):**
+![Cenário 4 — Return Policy & Right of Regret](docs/images/scenario_4_ui.png)
+
+* **Cenário 5 — Scope Guardrail & Accessory Deflection (Section 7.1):**
+![Cenário 5 — Scope Guardrail & Accessory Deflection](docs/images/scenario_5_ui.png)
