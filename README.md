@@ -18,6 +18,8 @@ Production-grade prototype of an intelligent conversational customer service age
 
 ### 1. Agent Architecture: Hierarchical Router + Specialized Workers
 Rather than overloading a single monolithic ReAct prompt with dozens of conflicting instructions and tools, we implemented a **Hierarchical Intent-Routed Architecture**:
+
+![Hierarchical Router-Worker Architecture](docs/images/hierarchical_architecture.png)
 * **Triage / Guardrail Router (Fast / Low-Reasoning):** Categorizes incoming user queries in a single step into four discrete domains (`CATALOG_SALES`, `ORDER_TRACKING`, `STORE_POLICY`, `OUT_OF_SCOPE`) while filtering malicious inputs.
 * **Specialized Workers (High-Reasoning Execution):**
   * **Sales & Catalog Consultant:** Performs parameterized SQL queries against the product database, applying empathetic consultative sales principles (*SPIN Selling*) and soundwood/ergonomics guidance. Strictly checks `is_active == 1` for promotions to prevent applying expired discounts.
