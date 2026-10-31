@@ -1,0 +1,43 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.key
+*.token
+
+# Databases & Cache
+*.sqlite3
+*.db-journal
+graphify-out/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / Frontend (if building)
+node_modules/
+dist/
+build/
+.npm
+
+# IDEs & System
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
