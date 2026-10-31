@@ -87,6 +87,8 @@ Deploying enterprise conversational AI requires rigorous **FinOps engineering** 
 
 Exposing conversational agents to e-commerce customers introduces substantial attack surfaces. The system embeds **5 defense layers**:
 
+![5-Layer Defense-in-Depth Security Architecture](docs/images/security_hardening_layers.png)
+
 ```mermaid
 flowchart TD
     In([Customer Message]) --> L1["Layer 1: Sanitization & Context Delimiters<br/>(Blocks context-breaking XML injection)"]
@@ -115,6 +117,8 @@ As requested in the Artefact assessment guidelines:
 
 ## 🤖 Development Methodology: Multi-Agent Orchestration & Tiered Reasoning
 In full alignment with Artefact's assessment guidelines (*"Use of code assistants... explain the chosen tool and how you used it"*), the development process itself was executed through an **Orchestrator-Workers Multi-Agent Workflow**:
+
+![Orchestrator-Workers Multi-Agent Workflow](docs/images/development_methodology.png)
 
 ```mermaid
 flowchart TD

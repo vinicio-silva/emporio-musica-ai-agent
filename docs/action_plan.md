@@ -17,6 +17,8 @@ Before detailing the target application architecture, this section documents the
 
 The implementation workflow follows a strict **Lead Architect + Specialized Worker Agents** orchestration model:
 
+![Development Architecture — Orchestrator-Workers Multi-Agent Workflow](images/development_methodology.png)
+
 ```mermaid
 flowchart TD
     Lead["Lead Architect / Orchestrator<br/>(High Reasoning - Pro)<br/>• API contracts & Pydantic schema design<br/>• Consultative sales & hardening prompt design<br/>• Code review & delivery sign-off"]
@@ -73,6 +75,8 @@ To enforce clean code, visual polish, and high commercial impact, specific skill
 | **Maintainability** | Fragile (updating a sales prompt can inadvertently degrade order lookups). | High (isolated modules with independent unit and integration tests). |
 
 ### 1.2 Decision: Hierarchical Router-Worker Architecture
+
+![Hierarchical Router-Worker Architecture](images/hierarchical_architecture.png)
 
 ```mermaid
 flowchart TD
