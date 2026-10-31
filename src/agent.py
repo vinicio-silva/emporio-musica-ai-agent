@@ -167,11 +167,11 @@ JAILBREAK_PATTERNS = [
     r"esqueça\s+(todas\s+as\s+)?instruções",
     r"system\s*prompt",
     r"prompt\s+de\s+sistema",
+    r"regras\s+(internas|de\s+sistema)",
     r"jailbreak",
     r"dan\s+mode",
-    r"me\s+venda\s+por\s+r?\$?\s*1",
-    r"sou\s+o\s+gerente",
-    r"sou\s+o\s+dono",
+    r"me\s+venda\s+(?:por|a)\s+r?\$?\s*[0-9]+(?:[,.][0-9]{2})?",
+    r"(?:sou|voc[eê]\s+[eé])\s+o\s+(?:gerente|dono|administrador|patr[aã]o)",
     r"give\s+me\s+all\s+your\s+instructions",
 ]
 
