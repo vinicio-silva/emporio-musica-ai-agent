@@ -10,6 +10,7 @@ Features:
   3. docs/Emporio_da_Musica_Technical_Documentation.pdf
 """
 
+import base64
 import os
 import re
 import shutil
@@ -286,6 +287,24 @@ hr {
     justify-content: space-between;
     gap: 8px;
 }
+.ui-screenshot-card {
+    margin: 1.5em 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+.ui-screenshot-card img {
+    max-width: 98%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.ui-screenshot-card .caption {
+    font-size: 8pt;
+    color: #57606a;
+    margin-top: 6px;
+    font-style: italic;
+}
 """
 
 HTML_HIERARCHICAL = """
@@ -415,7 +434,15 @@ def transform_markdown_for_pdf(md_content: str, is_main: bool = True) -> str:
     md = re.sub(r"!\[.*?\]\([^\)]*security_hardening_layers\.png\)", HTML_SECURITY.strip(), md)
     md = re.sub(r"!\[.*?\]\([^\)]*development_methodology\.png\)", HTML_METHODOLOGY.strip(), md)
 
-    # 4. Remove any other lingering image references
+    # 4. Embed storefront UI screenshot as base64 data URI
+    ui_img_path = BASE_DIR / "docs" / "images" / "storefront_ui.png"
+    if ui_img_path.exists():
+        with open(ui_img_path, "rb") as f:
+            b64_img = base64.b64encode(f.read()).decode("utf-8")
+        ui_html = f'<div class="ui-screenshot-card"><img src="data:image/png;base64,{b64_img}" alt="Empório da Música Storefront &amp; Chat Widget" /><p class="caption">Figura: Interface Web da Empório da Música com Catálogo Dinâmico e Widget Flutuante de Atendimento Conversacional via Streaming SSE.</p></div>'
+        md = re.sub(r"!\[.*?\]\([^\)]*storefront_ui\.png\)", ui_html, md)
+
+    # 5. Remove any other lingering image references
     md = re.sub(r"!\[.*?\]\(.*?\)", "", md)
 
     # 5. Clean up multiple empty lines
