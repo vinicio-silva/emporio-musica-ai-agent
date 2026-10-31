@@ -1,0 +1,20 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: emporio_musica_agent
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+      - REPLICATE_MODEL_HIGH=${REPLICATE_MODEL_HIGH:-meta/meta-llama-3-70b-instruct}
+      - REPLICATE_MODEL_FAST=${REPLICATE_MODEL_FAST:-meta/meta-llama-3-8b-instruct}
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data

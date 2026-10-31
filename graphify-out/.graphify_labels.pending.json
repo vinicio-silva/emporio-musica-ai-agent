@@ -1,0 +1,18 @@
+{
+  "0": "rag.py",
+  "1": "agent.py",
+  "2": "llm.py",
+  "3": "Full Implementation Action Plan — Empório da Música AI Agent",
+  "4": "EmporioAgent",
+  "5": "get_agent",
+  "6": "Empório da Música — AI Customer Service Agent",
+  "7": "api.py",
+  "8": "app.js",
+  "9": "tools.py",
+  "10": "Transcrição Oficial de Avaliação — Cenário 1: Busca de Catálogo com Restrição de Preço (Até R$ 1.000)",
+  "11": "Transcrição Oficial de Avaliação — Cenário 2: Informações Institucionais, Endereço e Horário de Funcionamento",
+  "12": "Transcrição Oficial de Avaliação — Cenário 3: Consulta Específica de Preço, Estoque e Ficha Técnica (Takamine GD20)",
+  "13": "Transcrição Oficial de Avaliação — Cenário 4: Política de Trocas e Direito de Arrependimento (CDC)",
+  "14": "Transcrição Oficial de Avaliação — Cenário 5: Guardrail de Escopo e Recusa Educada de Acessórios",
+  "15": "SessionMemory"
+}

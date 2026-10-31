@@ -23,7 +23,6 @@ venv.bak/
 # Databases & Cache
 *.sqlite3
 *.db-journal
-graphify-out/
 .pytest_cache/
 .coverage
 htmlcov/

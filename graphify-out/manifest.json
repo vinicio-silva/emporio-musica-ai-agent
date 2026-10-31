@@ -1,0 +1,152 @@
+{
+  "cli.py": {
+    "mtime": 1793466245.3113706,
+    "seen": 1793466597.8158906,
+    "ast_hash": "72577b7248de7e594df40fbe1f239dc4",
+    "semantic_hash": ""
+  },
+  "run.py": {
+    "mtime": 1793466251.1765082,
+    "seen": 1793466597.8158906,
+    "ast_hash": "c9f79aaef43382aa88bd87c5b7270d16",
+    "semantic_hash": ""
+  },
+  "src/agent.py": {
+    "mtime": 1793466450.1029005,
+    "seen": 1793466597.8158906,
+    "ast_hash": "fdcb8e369ab4de377b50b96f11b0114e",
+    "semantic_hash": ""
+  },
+  "src/api.py": {
+    "mtime": 1793466237.2455015,
+    "seen": 1793466597.8158906,
+    "ast_hash": "f9c313b1333200f4b7057bd0a3162395",
+    "semantic_hash": ""
+  },
+  "src/database.py": {
+    "mtime": 1793465760.4678829,
+    "seen": 1793466597.8158906,
+    "ast_hash": "74e2306accb3cc165ddcaf324e64046f",
+    "semantic_hash": ""
+  },
+  "src/llm.py": {
+    "mtime": 1793466076.404119,
+    "seen": 1793466597.8158906,
+    "ast_hash": "f3494c5061f2f631df1bf5ab83fa4906",
+    "semantic_hash": ""
+  },
+  "src/rag.py": {
+    "mtime": 1793465888.8503754,
+    "seen": 1793466597.8158906,
+    "ast_hash": "654c1bfa27140d4770ff13c970422eca",
+    "semantic_hash": ""
+  },
+  "src/tools.py": {
+    "mtime": 1793465916.6626067,
+    "seen": 1793466597.8158906,
+    "ast_hash": "7920edece3717d0d0cca946668a912c5",
+    "semantic_hash": ""
+  },
+  "static/app.js": {
+    "mtime": 1793466364.0297053,
+    "seen": 1793466597.8158906,
+    "ast_hash": "8148f10a772b4d65d315d9d443ca7d70",
+    "semantic_hash": ""
+  },
+  "tests/conftest.py": {
+    "mtime": 1793466433.6226666,
+    "seen": 1793466597.8158906,
+    "ast_hash": "aef0fe0e0c8c2a71aef8a25e204937d3",
+    "semantic_hash": ""
+  },
+  "tests/record_scenarios.py": {
+    "mtime": 1793466481.4350104,
+    "seen": 1793466597.8158906,
+    "ast_hash": "5811fd8855f1f1f7cad1d8c43b62b447",
+    "semantic_hash": ""
+  },
+  "tests/test_database.py": {
+    "mtime": 1793466398.612372,
+    "seen": 1793466597.8158906,
+    "ast_hash": "4502847fb4ebc13f93b883041bf7591f",
+    "semantic_hash": ""
+  },
+  "tests/test_guardrails_security.py": {
+    "mtime": 1793466416.4098182,
+    "seen": 1793466597.8158906,
+    "ast_hash": "fd9b6d4811d9be378eda2d9c5026951a",
+    "semantic_hash": ""
+  },
+  "tests/test_rag.py": {
+    "mtime": 1793466407.5185664,
+    "seen": 1793466597.8158906,
+    "ast_hash": "87897494c949c61c703b61cea776ffa7",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1793464884.1355448,
+    "seen": 1793466597.8158906,
+    "ast_hash": "fea55466e59a3f2519a611862aaa53d0",
+    "semantic_hash": ""
+  },
+  "docs/action_plan.md": {
+    "mtime": 1793464928.6194806,
+    "seen": 1793466597.8158906,
+    "ast_hash": "0f64473f20c3d9fd0fabe9c9a35b3052",
+    "semantic_hash": ""
+  },
+  "docs/conversations/scenario_1_catalog_search.md": {
+    "mtime": 1793466503.3894815,
+    "seen": 1793466597.8158906,
+    "ast_hash": "36e8cd57f389e9a617befc49a617ee61",
+    "semantic_hash": ""
+  },
+  "docs/conversations/scenario_2_store_info.md": {
+    "mtime": 1793466510.6623943,
+    "seen": 1793466597.8158906,
+    "ast_hash": "ee42862465f8d583f69beb2634f16d42",
+    "semantic_hash": ""
+  },
+  "docs/conversations/scenario_3_product_pricing.md": {
+    "mtime": 1793466523.791555,
+    "seen": 1793466597.8158906,
+    "ast_hash": "89fa40744cde6b1e74ae99f9eda6e747",
+    "semantic_hash": ""
+  },
+  "docs/conversations/scenario_4_return_policy.md": {
+    "mtime": 1793466536.6169977,
+    "seen": 1793466597.8158906,
+    "ast_hash": "440be145ba7fa00ae7728c38a3e0f9cd",
+    "semantic_hash": ""
+  },
+  "docs/conversations/scenario_5_guardrail_deflection.md": {
+    "mtime": 1793466540.1175518,
+    "seen": 1793466597.8158906,
+    "ast_hash": "0a787fe525024a40c3302eb29df6dffe",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1793465661.7814286,
+    "seen": 1793466597.8158906,
+    "ast_hash": "16632d9e384e5915c4ad5b01c64fd42b",
+    "semantic_hash": ""
+  },
+  "static/index.html": {
+    "mtime": 1793466302.962468,
+    "seen": 1793466597.8158906,
+    "ast_hash": "eebe302ef8342f0d6c8709bd18e10f95",
+    "semantic_hash": ""
+  },
+  "data/pol\u00edticas_da_loja.pdf": {
+    "mtime": 1793461144.5791075,
+    "seen": 1793466597.8158906,
+    "ast_hash": "e8e8c2779d5b406cc4d76d1bab48f11c",
+    "semantic_hash": ""
+  },
+  "docs/desafio_tecnico_ai_eng_artefact.pdf": {
+    "mtime": 1793461144.5133896,
+    "seen": 1793466597.8158906,
+    "ast_hash": "6618059c503aa95c67fada3d4595981c",
+    "semantic_hash": ""
+  }
+}
