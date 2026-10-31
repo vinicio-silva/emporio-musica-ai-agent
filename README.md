@@ -24,6 +24,7 @@ Rather than overloading a single monolithic ReAct prompt with dozens of conflict
   * **Order & Tracking Specialist:** Securely queries order lifecycle, tracking codes, carrier logistics, and customer records with strict PII safeguards.
   * **Policy & Compliance Specialist (RAG):** Performs semantic search over the official Policy Manual (`políticas_da_loja.pdf`) to deliver definitive answers regarding returns, exchanges, shipping, and warranty.
   * **Scope Guardrail Handler:** Politely declines requests for accessories not sold by the store (strings, cables, pedals, amplifiers), redirecting customers to partner stores in accordance with Section 7.1 of the manual.
+  * **Compound / Multi-Intent Synthesis Worker:** When a customer asks a compound query spanning multiple domains in a single sentence (e.g. asking about an instrument AND accessories, or instrument price AND store hours/order tracking), the system coordinates multi-domain data retrieval and synthesizes a unified, consultative response in a single conversational turn.
 
 ### 2. Multi-Turn Session Memory (Sliding Window)
 To enable natural conversational continuity (e.g., asking *"How much is Takamine GD20?"* and following up with *"Does it come in Natural finish?"* or *"What is the shipping cost for it to Campo Grande?"*):
