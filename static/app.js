@@ -158,25 +158,28 @@ function openChatWithQuery(query) {
   sendMessage(query);
 }
 
+// Format markdown helper
+function formatMarkdown(text) {
+  if (!text) return "";
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\n\n/g, "<br><br>")
+    .replace(/\n/g, "<br>");
+}
+
 // Append a message to the chat feed
 function appendMessage(text, isAgent = false) {
   const msgDiv = document.createElement("div");
   msgDiv.className = `message ${isAgent ? "agent-message" : "user-message"}`;
-  
-  // Clean markdown bold and lists simply for readability
-  let formatted = text
-    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.*?)\*/g, "<em>$1</em>")
-    .replace(/\n\n/g, "<br><br>")
-    .replace(/\n/g, "<br>");
-
-  msgDiv.innerHTML = `<div class="message-content">${formatted}</div>`;
+  msgDiv.innerHTML = `<div class="message-content">${formatMarkdown(text)}</div>`;
   chatMessages.appendChild(msgDiv);
   chatMessages.scrollTop = chatMessages.scrollHeight;
   return msgDiv;
 }
 
-// Send message to FastAPI endpoint with streaming
+// Send message to FastAPI endpoint with streaming & JSON fallback
 async function sendMessage(messageText) {
   const text = messageText.trim();
   if (!text) return;
@@ -197,10 +200,18 @@ async function sendMessage(messageText) {
       }),
     });
 
-    typingIndicator.style.display = "none";
-
     if (!response.ok) {
-      throw new Error("Erro na comunicação com a API");
+      throw new Error(`Erro na API: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+
+    // If server returned regular JSON
+    if (contentType.includes("application/json")) {
+      const data = await response.json();
+      typingIndicator.style.display = "none";
+      appendMessage(data.response || "Sem resposta.", true);
+      return;
     }
 
     // Process SSE stream
@@ -208,46 +219,66 @@ async function sendMessage(messageText) {
     const decoder = new TextDecoder("utf-8");
     let agentMsgEl = null;
     let accumulatedText = "";
+    let buffer = "";
 
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
 
-      const rawChunk = decoder.decode(value, { stream: true });
-      const lines = rawChunk.split("\n");
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop(); // Retain incomplete line
 
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) continue;
+
+        // Support lines starting with "data:"
+        if (line.startsWith("data:")) {
+          const jsonStr = line.replace(/^(data:\s*)+/, "").trim();
+          if (!jsonStr) continue;
+
           try {
-            const data = JSON.parse(line.slice(6));
+            const data = JSON.parse(jsonStr);
             if (data.chunk) {
+              typingIndicator.style.display = "none";
               accumulatedText += data.chunk;
               if (!agentMsgEl) {
                 agentMsgEl = appendMessage(accumulatedText, true);
               } else {
-                const formatted = accumulatedText
-                  .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-                  .replace(/\*(.*?)\*/g, "<em>$1</em>")
-                  .replace(/\n\n/g, "<br><br>")
-                  .replace(/\n/g, "<br>");
-                agentMsgEl.querySelector(".message-content").innerHTML = formatted;
+                agentMsgEl.querySelector(".message-content").innerHTML = formatMarkdown(accumulatedText);
               }
               chatMessages.scrollTop = chatMessages.scrollHeight;
             }
           } catch (e) {
-            // Partial JSON chunk - ignore
+            // Incomplete JSON token - continue
           }
         }
       }
     }
 
-    if (!agentMsgEl && accumulatedText) {
-      appendMessage(accumulatedText, true);
+    // Fallback if streaming ended without rendering text
+    if (!agentMsgEl) {
+      if (accumulatedText.trim()) {
+        appendMessage(accumulatedText, true);
+      } else {
+        // Fallback fetch non-streamed
+        const fbRes = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, session_id: SESSION_ID, stream: false }),
+        });
+        if (fbRes.ok) {
+          const fbData = await fbRes.json();
+          appendMessage(fbData.response, true);
+        }
+      }
     }
   } catch (err) {
-    typingIndicator.style.display = "none";
     console.error("Chat error:", err);
     appendMessage("Desculpe, ocorreu uma instabilidade momentânea na conexão. Por favor, tente novamente.", true);
+  } finally {
+    typingIndicator.style.display = "none";
   }
 }
 

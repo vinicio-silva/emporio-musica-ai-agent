@@ -415,7 +415,14 @@ class EmporioAgent:
         else:
             budget = extract_budget(user_message)
             clean = user_message.lower()
-            keyword = "violão" if "viol" in clean else None
+            keyword = None
+            for cand in ["takamine", "yamaha", "fender", "tagima", "giannini", "ibanez", "roland", "epiphone", "martin", "violão", "violao", "guitarra", "baixo", "teclado", "bateria"]:
+                if cand in clean:
+                    keyword = cand
+                    break
+            if not keyword:
+                keyword = "violão" if "viol" in clean else None
+
             if "takamine gd20" in clean:
                 prod_detail = get_product_details("Takamine GD20")
                 catalog_data = json.dumps([prod_detail] if prod_detail else [], ensure_ascii=False, indent=2)

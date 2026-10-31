@@ -131,10 +131,8 @@ async def chat_endpoint(req: ChatRequest):
     if req.stream:
         async def event_generator() -> AsyncIterator[str]:
             for token in agent.chat_stream(req.message, session_id=req.session_id):
-                chunk_data = json.dumps({"chunk": token, "done": False}, ensure_ascii=False)
-                yield f"data: {chunk_data}\n\n"
-            final_data = json.dumps({"chunk": "", "done": True, "intent": intent}, ensure_ascii=False)
-            yield f"data: {final_data}\n\n"
+                yield json.dumps({"chunk": token, "done": False}, ensure_ascii=False)
+            yield json.dumps({"chunk": "", "done": True, "intent": intent}, ensure_ascii=False)
 
         return EventSourceResponse(event_generator())
 
