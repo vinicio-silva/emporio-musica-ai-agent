@@ -87,6 +87,24 @@ HISTÓRICO DA CONVERSA:
 </user_message>
 """
 
+COMPOUND_PROMPT_TEMPLATE = """{system_persona}
+
+Você está atuando como CONSULTOR MULTIDISCIPLINAR DA EMPÓRIO DA MÚSICA (Atendimento Composto).
+O cliente fez uma pergunta que combina múltiplos tópicos (ex: produto + acessórios, ou produto + políticas/horários).
+Responda a TODOS os pontos de forma integrada, clara, calorosa e comercialmente transparente:
+{compound_guidelines}
+
+DADOS CONSULTADOS NO SISTEMA:
+{compound_data}
+
+HISTÓRICO DA CONVERSA:
+{history}
+
+<user_message>
+{user_message}
+</user_message>
+"""
+
 ACCESSORY_DEFLECTION_MESSAGE = (
     "A Empório da Música é uma loja especializada e trabalha **exclusivamente com instrumentos musicais** "
     "(como violões, guitarras, baixos, teclados, baterias e instrumentos de sopro). "
@@ -160,6 +178,16 @@ ACCESSORY_KEYWORDS = [
     "amplificador", "amplificadores", "ampli",
     "afinador", "afinadores", "correia", "correias",
 ]
+
+ACCESSORY_BASE = (
+    r"(?:encordoamentos?|cordas?|palhetas?|cabos?|cases?|capas?|"
+    r"pedais|pedal(?:eiras?)?|amplificador(?:es)?|ampli|afinador(?:es)?|correias?)"
+)
+
+ACCESSORY_PHRASE_PATTERN = re.compile(
+    rf"\b{ACCESSORY_BASE}\b(?:\s+(?:de|para|pra|p/|em|com|avuls[ao]s?)\s+[a-záéíóúâêîôûãõç0-9\'.-]+)*(?:\s+[a-záéíóúâêîôûãõç0-9\'.-]+)?",
+    re.IGNORECASE,
+)
 
 JAILBREAK_PATTERNS = [
     r"ignore\s+(all\s+)?(previous|prior)\s+instructions",
@@ -237,39 +265,75 @@ class EmporioAgent:
         self.llm = llm_client or get_llm_client()
         self.rag = get_rag_engine()
 
-    def classify_intent(self, user_message: str) -> str:
-        """Route user query into one of: OUT_OF_SCOPE, ORDER_TRACKING, STORE_POLICY, CATALOG_SALES."""
+    def classify_intents(self, user_message: str) -> List[str]:
+        """Detect one or more intents in a user query (supporting compound/multi-intent queries)."""
         clean = user_message.strip()
 
         # 1. Instant security guardrails
         if check_jailbreak(clean):
-            return "OUT_OF_SCOPE"
-        if check_accessory_query(clean):
-            return "OUT_OF_SCOPE"
+            return ["OUT_OF_SCOPE"]
 
-        # 2. Return & exchange policy questions take priority even if phrasing mentions 'meu pedido'
+        clean_lower = clean.lower()
+        intents = []
+
+        # Check if an accessory is mentioned
+        has_accessory = check_accessory_query(clean)
+
+        # Strip accessory noun phrases and their qualifiers to test for independent instrument interest
+        stripped = ACCESSORY_PHRASE_PATTERN.sub("", clean_lower)
+
+        # Check for independent instrument keywords
+        instrument_keywords = [
+            "guitarra", "guitarras", "violao", "violão", "violões", "violoes",
+            "baixo", "baixos", "teclado", "teclados", "bateria", "baterias", "ukulele", "ukuleles",
+            "takamine", "yamaha", "fender", "tagima", "giannini", "ibanez", "roland", "epiphone", "martin",
+            "stratocaster", "telecaster", "les paul", "dreadnought", "instrumento", "instrumentos"
+        ]
+        has_instrument = any(re.search(rf"\b{w}\b", stripped) for w in instrument_keywords) or bool(extract_budget(clean))
+
+        # Check for return / exchange policies
         return_keywords = ["arrependimento", "arrependi", "devolver", "devolução", "devolucao", "troca", "trocar"]
-        if any(w in clean.lower() for w in return_keywords) and not extract_tracking_code(clean):
-            return "STORE_POLICY"
+        has_return = any(w in clean_lower for w in return_keywords) and not extract_tracking_code(clean)
 
-        # 3. Explicit order tracking patterns
-        if extract_tracking_code(clean) or any(w in clean.lower() for w in ["rastreio", "rastrear", "status do pedido", "onde esta meu pedido", "onde está meu pedido"]):
-            return "ORDER_TRACKING"
-
-        # 4. Explicit store policy patterns
+        # Check for general store policy keywords
         policy_keywords = [
             "endereço", "endereco", "onde fica", "localização", "localizacao",
             "horário", "horario", "funciona", "abertura", "fechamento", "expediente",
             "cdc", "frete", "entrega", "prazo de entrega", "jadlog", "sedex", "pac",
             "garantia", "formas de pagamento", "parcelamento", "boleto",
         ]
-        if any(w in clean.lower() for w in policy_keywords):
-            # If specifically asking about product pricing, sales takes precedence unless it's pure policy
-            if not any(w in clean.lower() for w in ["violão", "violao", "guitarra", "baixo", "teclado", "takamine", "yamaha", "custa"]):
-                return "STORE_POLICY"
+        has_policy = has_return or any(w in clean_lower for w in policy_keywords)
 
-        # 5. Default to catalog sales consultant for product inquiries
-        return "CATALOG_SALES"
+        # Check for order tracking
+        has_tracking = bool(extract_tracking_code(clean)) or any(w in clean_lower for w in ["rastreio", "rastrear", "status do pedido", "onde esta meu pedido", "onde está meu pedido"])
+
+        if has_tracking:
+            intents.append("ORDER_TRACKING")
+
+        if has_instrument:
+            intents.append("CATALOG_SALES")
+
+        if has_policy:
+            # Only tag STORE_POLICY if it's an explicit store policy inquiry or compound
+            if not (has_instrument and not any(w in clean_lower for w in ["horário", "horario", "endereço", "endereco", "onde fica", "devolver", "devolução", "troca", "prazo", "garantia", "entrega"])):
+                intents.append("STORE_POLICY")
+
+        if has_accessory and not has_instrument and not has_policy and not has_tracking:
+            intents.append("OUT_OF_SCOPE")
+        elif has_accessory:
+            intents.append("OUT_OF_SCOPE")
+
+        if not intents:
+            intents.append("CATALOG_SALES")
+
+        return intents
+
+    def classify_intent(self, user_message: str) -> str:
+        """Route user query into primary intent string for API/metrics."""
+        intents = self.classify_intents(user_message)
+        if len(intents) == 1:
+            return intents[0]
+        return "COMPOUND"
 
     def handle_accessory_or_jailbreak(self, message: str) -> str:
         """Provide hardened refusal message."""
@@ -370,15 +434,78 @@ class EmporioAgent:
         resp = self.llm.complete(messages, tier="fast", temperature=0.2, max_tokens=500)
         return resp.content
 
+    def build_compound_prompt(self, message: str, intents: List[str], session_id: str) -> str:
+        """Construct prompt and gather data across multiple domains for compound queries."""
+        data_sections = []
+        guidelines = []
+
+        if "ORDER_TRACKING" in intents:
+            tracking_code = extract_tracking_code(message)
+            identifier = extract_email_or_phone(message)
+            if tracking_code and identifier:
+                order_res = check_order(tracking_code, identifier)
+                data_sections.append(f"### DADOS DO PEDIDO CONSULTADO:\n{json.dumps(order_res, ensure_ascii=False, indent=2)}")
+                guidelines.append("- Informe o andamento do pedido consultado, prazo de entrega e transportadora.")
+            else:
+                guidelines.append("- Para a parte sobre o pedido: solicite ao cliente a confirmação do e-mail ou telefone cadastrado junto com o código de rastreio para consulta segura (LGPD).")
+
+        if "CATALOG_SALES" in intents:
+            budget = extract_budget(message)
+            clean = message.lower()
+            keyword = None
+            for cand in ["takamine", "yamaha", "fender", "tagima", "giannini", "ibanez", "roland", "epiphone", "martin", "violão", "violao", "guitarra", "baixo", "teclado", "bateria", "stratocaster", "telecaster"]:
+                if cand in clean:
+                    keyword = cand
+                    break
+            if not keyword:
+                keyword = "violão" if "viol" in clean else None
+
+            if "takamine gd20" in clean:
+                prod_detail = get_product_details("Takamine GD20")
+                items = [prod_detail] if prod_detail else []
+            else:
+                items = search_products(keyword=keyword, max_price=budget, limit=4)
+
+            data_sections.append(f"### CATÁLOGO DE INSTRUMENTOS:\n{json.dumps(items, ensure_ascii=False, indent=2)}")
+            guidelines.append("- Apresente os instrumentos encontrados com suas características, 5% de desconto no PIX e parcelamento em até 12x sem juros.")
+
+        if "STORE_POLICY" in intents:
+            policy_context = self.rag.get_context_for_prompt(message, top_k=2)
+            data_sections.append(f"### POLÍTICAS OFICIAIS RECUPERADAS (RAG):\n{policy_context}")
+            guidelines.append("- Responda às dúvidas institucionais (endereço, horários de funcionamento, frete, CDC ou devoluções) com base nas políticas da loja.")
+
+        if "OUT_OF_SCOPE" in intents:
+            guidelines.append("- ATENÇÃO AOS ACESSÓRIOS (Seção 7.1): O cliente também perguntou sobre acessórios (cordas, pedais, cabos, amplificadores). Esclareça educadamente que a loja trabalha EXCLUSIVAMENTE com instrumentos completos e não vende acessórios avulsos, indicando parceiros locais em Campo Grande/MS.")
+
+        return COMPOUND_PROMPT_TEMPLATE.format(
+            system_persona=SYSTEM_PERSONA,
+            compound_guidelines="\n".join(guidelines),
+            compound_data="\n\n".join(data_sections),
+            history=memory.format_history_text(session_id),
+            user_message=message,
+        )
+
+    def run_compound_worker(self, message: str, intents: List[str], session_id: str) -> str:
+        """Execute compound multi-intent worker."""
+        prompt = self.build_compound_prompt(message, intents, session_id)
+        messages = [
+            {"role": "system", "content": SYSTEM_PERSONA},
+            {"role": "user", "content": prompt},
+        ]
+        resp = self.llm.complete(messages, tier="deep", temperature=0.3, max_tokens=750)
+        return resp.content
+
     def chat(self, user_message: str, session_id: str = "default") -> str:
         """Process customer message end-to-end, update memory, and return response."""
-        intent = self.classify_intent(user_message)
+        intents = self.classify_intents(user_message)
 
-        if intent == "OUT_OF_SCOPE":
+        if len(intents) > 1:
+            answer = self.run_compound_worker(user_message, intents, session_id)
+        elif intents[0] == "OUT_OF_SCOPE":
             answer = self.handle_accessory_or_jailbreak(user_message)
-        elif intent == "ORDER_TRACKING":
+        elif intents[0] == "ORDER_TRACKING":
             answer = self.run_order_worker(user_message, session_id)
-        elif intent == "STORE_POLICY":
+        elif intents[0] == "STORE_POLICY":
             answer = self.run_policy_worker(user_message, session_id)
         else:
             answer = self.run_sales_worker(user_message, session_id)
@@ -389,22 +516,24 @@ class EmporioAgent:
 
     def chat_stream(self, user_message: str, session_id: str = "default") -> Iterator[str]:
         """Stream customer message response token by token."""
-        intent = self.classify_intent(user_message)
+        intents = self.classify_intents(user_message)
 
-        if intent == "OUT_OF_SCOPE":
+        if len(intents) == 1 and intents[0] == "OUT_OF_SCOPE":
             answer = self.handle_accessory_or_jailbreak(user_message)
             memory.add_turn(session_id, user_message, answer)
             yield answer
             return
 
         # For worker responses, compute prompt and stream through LLM
-        if intent == "ORDER_TRACKING":
+        if len(intents) == 1 and intents[0] == "ORDER_TRACKING":
             answer = self.run_order_worker(user_message, session_id)
             memory.add_turn(session_id, user_message, answer)
             yield answer
             return
 
-        if intent == "STORE_POLICY":
+        if len(intents) > 1:
+            prompt = self.build_compound_prompt(user_message, intents, session_id)
+        elif intents[0] == "STORE_POLICY":
             policy_context = self.rag.get_context_for_prompt(user_message, top_k=2)
             prompt = POLICY_PROMPT_TEMPLATE.format(
                 system_persona=SYSTEM_PERSONA,

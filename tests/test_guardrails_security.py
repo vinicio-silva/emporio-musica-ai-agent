@@ -67,3 +67,36 @@ def test_sliding_window_memory():
     assert messages[-1]["content"] == "Resposta 9"
 
     memory.clear(session_id)
+
+
+def test_compound_multi_intent_routing(agent):
+    """Verify that compound queries with multiple intents are correctly detected and handled."""
+    # 1. Instrument + Accessory
+    q_inst_acc = "Vocês têm guitarra Stratocaster e também encordoamento para ela?"
+    intents1 = agent.classify_intents(q_inst_acc)
+    assert "CATALOG_SALES" in intents1
+    assert "OUT_OF_SCOPE" in intents1
+    assert agent.classify_intent(q_inst_acc) == "COMPOUND"
+
+    prompt1 = agent.build_compound_prompt(q_inst_acc, intents1, session_id="test_compound")
+    assert "CATÁLOGO DE INSTRUMENTOS" in prompt1
+    assert "ATENÇÃO AOS ACESSÓRIOS" in prompt1
+
+    # 2. Instrument + Store Policy
+    q_inst_pol = "Qual o preço da guitarra Tagima e qual o horário de funcionamento da loja?"
+    intents2 = agent.classify_intents(q_inst_pol)
+    assert "CATALOG_SALES" in intents2
+    assert "STORE_POLICY" in intents2
+    assert agent.classify_intent(q_inst_pol) == "COMPOUND"
+
+    prompt2 = agent.build_compound_prompt(q_inst_pol, intents2, session_id="test_compound")
+    assert "CATÁLOGO DE INSTRUMENTOS" in prompt2
+    assert "POLÍTICAS OFICIAIS RECUPERADAS" in prompt2
+
+    # 3. Order Tracking + Store Policy
+    q_ord_pol = "Onde está meu pedido BR123456789BR e qual é o prazo de entrega?"
+    intents3 = agent.classify_intents(q_ord_pol)
+    assert "ORDER_TRACKING" in intents3
+    assert "STORE_POLICY" in intents3
+    assert agent.classify_intent(q_ord_pol) == "COMPOUND"
+
