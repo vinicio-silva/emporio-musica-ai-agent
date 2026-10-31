@@ -249,6 +249,26 @@ hr {
     color: #1f2328;
     line-height: 1.4;
 }
+
+/* Candidate Metadata Card */
+.candidate-header {
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-left: 4px solid #0969da;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 1.2em 0;
+    font-size: 9pt;
+    line-height: 1.6;
+}
+.candidate-header strong {
+    color: #1f2328;
+}
+.candidate-header a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+}
 .lead-node {
     background: #ffffff;
     border: 1.5px solid #1a7f37;
@@ -364,10 +384,28 @@ HTML_METHODOLOGY = """
 """
 
 
-def transform_markdown_for_pdf(md_content: str) -> str:
+CANDIDATE_HEADER_HTML = """
+<div class="candidate-header">
+  <strong>Candidato:</strong> Vinicio Bernardes Silva<br/>
+  <strong>Cargo / Vaga:</strong> AI Engineer – Full-Stack para Aplicações com IA Generativa (Artefact Brazil)<br/>
+  <strong>GitHub do Projeto:</strong> <a href="https://github.com/vinicio-silva/emporio-musica-ai-agent">https://github.com/vinicio-silva/emporio-musica-ai-agent</a><br/>
+  <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/vinicio-bernardes-silva/">https://www.linkedin.com/in/vinicio-bernardes-silva/</a>
+</div>
+"""
+
+
+def transform_markdown_for_pdf(md_content: str, is_main: bool = True) -> str:
     """Transform markdown into clean HTML presentation for PDF."""
     # 1. Cleanly strip badges block
     md = re.sub(r"\[!\[.*?\]\(.*?\)\](?:\(.*?\))?\s*", "", md_content)
+
+    # 2. Insert candidate metadata card right under the main title if it's the main document
+    if is_main:
+        md = re.sub(
+            r"(### Technical Assessment: AI Engineer — Artefact Brazil\n)",
+            r"\1\n" + CANDIDATE_HEADER_HTML + "\n",
+            md,
+        )
 
     # 2. Remove all raw mermaid code blocks
     md = re.sub(r"```mermaid[\s\S]*?```", "", md)
@@ -451,14 +489,14 @@ def generate_all_pdfs() -> None:
     parts = [cleaned_readme]
     if arch_path.exists():
         with open(arch_path, "r", encoding="utf-8") as f:
-            parts.append("<div class='page-break'></div>\n\n# Appendix A: Detailed Architectural Specification\n\n" + transform_markdown_for_pdf(f.read()))
+            parts.append("<div class='page-break'></div>\n\n# Appendix A: Detailed Architectural Specification\n\n" + transform_markdown_for_pdf(f.read(), is_main=False))
 
     scenario_files = sorted(scenarios_dir.glob("scenario_*.md"))
     if scenario_files:
         scen_combined = ["<div class='page-break'></div>\n\n# Appendix B: Official Artefact Evaluation Scenarios Audit\n\nComprehensive audit transcripts and criteria validation for each of the 5 official technical assessment scenarios:\n"]
         for sf in scenario_files:
             with open(sf, "r", encoding="utf-8") as f:
-                scen_combined.append(f"<div class='page-break'></div>\n\n{transform_markdown_for_pdf(f.read())}")
+                scen_combined.append(f"<div class='page-break'></div>\n\n{transform_markdown_for_pdf(f.read(), is_main=False)}")
         parts.append("\n\n".join(scen_combined))
 
     master_md = "\n\n<div class='page-break'></div>\n\n".join(parts)
